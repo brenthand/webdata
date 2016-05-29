@@ -13,14 +13,22 @@ def parse(html):
     #print("Word Count: " + str(p.WORD_COUNT))
     return p.WORD_COUNT
 
-def webdata(t, list):
+def webdata(t, l):
     wordcount = 0
     if t == 'f':
-        for item in list:
+        for item in l:
             with open(item, 'r') as f:
                 wordcount += parse(f.read())
+    if t == 'fl':
+        with open(l[0], 'r') as f:
+            text_list = f.read()
+            l = text_list.split(',')
+        for item in l:
+            with open(item.strip(), 'r') as f:
+                wordcount += parse(f.read())
+
     if t == 'u':
-        for url in list:
+        for url in l:
             with urllib.request.urlopen(url) as response:
                 html = response.read()
                 wordcount += parse(str(html))
@@ -29,8 +37,16 @@ def webdata(t, list):
     print('Wordcount: ' + str(wordcount))
 
 
+def get_list(f):
+    with open(f, 'r') as x:
+        text_list = x.read()
+        l = text_list.split(',')
+
+    return(l)
+
 
 
 #l = ['test.html', 'test2.html', 'test3.html']
-l = ['http://novastellatranslations.com']
-webdata('u', l)
+#l = ['http://novastellatranslations.com']
+l = ['file_list.txt']
+webdata('fl', l)
