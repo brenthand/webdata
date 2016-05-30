@@ -1,5 +1,7 @@
 from webdata import Parser
 import urllib.request
+import tkinter
+import sys
 
 
 def parse(html):
@@ -45,8 +47,13 @@ def get_list(f):
     return(l)
 
 
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Invalid arguments")
+    else:
 
-#l = ['test.html', 'test2.html', 'test3.html']
-#l = ['http://novastellatranslations.com']
-l = ['file_list.txt']
-webdata('fl', l)
+        #l = ['test.html', 'test2.html', 'test3.html']
+        #l = ['http://novastellatranslations.com']
+        #l = ['file_list.txt']
+        #webdata('fl', l)
+        webdata(sys.argv[1], sys.argv[2:])
