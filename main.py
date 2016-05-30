@@ -32,6 +32,11 @@ def webdata(t, l):
             with open(item.strip(), 'r') as f:
                 wordcount += parse(f.read())
 
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+    # Need to handle redirects on first url
+    # that way if a site redirects the main url will
+    # be the redirected url not the original url
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
     if t == 'u':
         for url in l:
             wordcount = crawler(url)
