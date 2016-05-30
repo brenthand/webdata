@@ -1,28 +1,23 @@
 from html.parser import HTMLParser
+import urllib
+from urllib.parse import urljoin
 import re
 
 class Parser(HTMLParser):
 
-
-
     HEAD_TAG_ENDED = False
-    TEXT_TAGS = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'button', 'label', 'a',]
-    URL_HISTORY = []
-    URLS = []
     WORD_COUNT = 0
-
+    URLS = []
 
     def handle_starttag(self, tag, attrs):
-        # Only parse the 'anchor' tag.
-        if self.HEAD_TAG_ENDED and tag == "a":
-           # Check the list of defined attributes.
-           for name, value in attrs:
-               # If href is defined, print it.
-               if name == "href":
-                   #Handle domain specific urls and
-                   # create full path urls for
-                   #relative urls
-                   self.URLS.append(value)
+
+        if tag == 'a' and self.HEAD_TAG_ENDED:
+            for (key, value) in attrs:
+                if key == 'href':
+                    if value.startswith('tel:') or value.startswith('mailto:') or value.startswith('#'):
+                        continue
+                    newUrl = urljoin(self.url, value)
+                    self.URLS.append(newUrl)
 
     def handle_endtag(self, tag):
         if tag == "head":
@@ -32,8 +27,8 @@ class Parser(HTMLParser):
     def handle_data(self, data):
 
         if self.HEAD_TAG_ENDED:
-            self.WORD_COUNT += self.count_letters(data)
+            self.WORD_COUNT += self.count_words(data)
 
 
-    def count_letters(self, text):
+    def count_words(self, text):
         return len(re.findall(r'\w+', text))

@@ -1,19 +1,22 @@
 from webdata import Parser
 import urllib.request
-import tkinter
 import sys
 
 
 def parse(html):
 
-    """with open('test.html' , 'r') as myfile:
-        html=myfile.read()"""
-
     p = Parser()
+    p.url = ""
     p.feed(html)
 
-    #print("Word Count: " + str(p.WORD_COUNT))
     return p.WORD_COUNT
+
+def parseWeb(html, u):
+    p = Parser()
+    p.url = u
+    p.feed(html)
+
+    return p.WORD_COUNT, p.URLS
 
 def webdata(t, l):
     wordcount = 0
@@ -31,20 +34,37 @@ def webdata(t, l):
 
     if t == 'u':
         for url in l:
-            with urllib.request.urlopen(url) as response:
+            wordcount = crawler(url)
+            """"with urllib.request.urlopen(url) as response:
                 html = response.read()
-                wordcount += parse(str(html))
+                wordcount += parse(str(html))"""
 
 
     print('Wordcount: ' + str(wordcount))
 
 
-def get_list(f):
-    with open(f, 'r') as x:
-        text_list = x.read()
-        l = text_list.split(',')
+def crawler(u):
+    domain = u
+    urls = [u]
+    print(urls)
+    history = []
+    wordcount = 0
 
-    return(l)
+    for url in urls:
+        print(urls)
+        if url not in history:
+            try:
+                with urllib.request.urlopen(url) as response:
+                    html = response.read()
+                    w, u = parseWeb(str(html), url)
+                    wordcount += w
+                    for x in u:
+                        if domain in x:
+                            urls.append(x)
+                    history.append(url)
+            except Exception:
+                print("Error: " + url)
+    return wordcount
 
 
 if __name__ == "__main__":
@@ -56,4 +76,5 @@ if __name__ == "__main__":
         #l = ['http://novastellatranslations.com']
         #l = ['file_list.txt']
         #webdata('fl', l)
+        #print(sys.argv[1], sys.argv[2])
         webdata(sys.argv[1], sys.argv[2:])
